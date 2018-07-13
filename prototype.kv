@@ -1,13 +1,54 @@
 #: import main prototype
 
-Prototype:
-
-<Prototype>:
-    orientation: "horizontal"
-
+<Landing>:
     BoxLayout:
+        orientation: "vertical"
         size_hint_x: .3333
 
+        canvas:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size 
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1125
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
+                text: "  Clever Chords"
+                font_size: 42
+                size_hint_x: .85
+
+            Button:
+                size_hint_x: .175
+                background_normal: "icons/microphone-normal.png"
+                background_down: "icons/microphone-down.png"
+                on_press: 
+                    root.manager.transition.direction = "left"
+                    root.manager.current = "record"
+
+        ScrollView:
+            GridLayout:
+                id: songlist_view
+                orientation: "vertical"
+                size_hint_y: None
+                cols: 1
+                height: self.minimum_height
+        
+        
+<Record>:
     BoxLayout:
         orientation: "vertical"
         size_hint_x: .3333
@@ -29,30 +70,72 @@ Prototype:
                 Rectangle:
                     pos: self.pos
                     size: self.size
+                    
+            Button:
+                size_hint_x: .15
+                background_normal: "icons/back-normal.png"
+                background_down: "icons/back-down.png"
+                on_press: 
+                    root.manager.transition.direction = "right"
+                    root.manager.current = "landing"
+                    root.reset()
 
             Label:
                 text_size: self.size
                 halign: "left"
                 valign: "middle"
-                text: "  Clever Chords"
+                text: "Record"
                 font_size: 42
-                size_hint_x: .85
-
+                size_hint_x: .6
+                    
+            Spinner:
+                id: dropdown
+                text: "Guitar"
+                values: "Guitar", "Ukulele", "Mandolin", "Banjo"
+                size_hint_x: .25
+                font_size: 28
+            
+        AnchorLayout:
+            id: grid
+            orientation: "vertical"
+            size_hint_y: .9
+            anchor_y: "center"
+            anchor_x: "center"
+            
             Button:
-                size_hint_x: .15
-                background_normal: "icons/microphone-normal.png"
-                background_down: "icons/microphone-down.png"
-                on_press: root.record()
+                id: element
+                size_hint: .5,.3333
+                background_normal: "icons/stop-normal.png"
+                background_down: "icons/stop-down.png"
+                on_press: root.pressed()
+           
 
-        ScrollView:
-            GridLayout:
-                canvas:
-                id: songlist_view
-                orientation: "vertical"
-                size_hint_y: None
-                cols: 1
-                height: self.minimum_height
-
+<SaveInput>:
     BoxLayout:
-        size_hint_x: .3333
+        orientation: "vertical"
+        
+        Label:
+            text: "Save Recording"
+        
+        TextInput:
+            hint_text: "Enter song name"
+            id: songname
+            
+        BoxLayout:
+            orientation: "horizontal"
+            
+            Button:
+                text: "Delete"
+                on_press: 
+                    songname = ""
+                    root.parent.parent.parent.manager.transition.direction = "right"
+                    root.parent.parent.parent.manager.current = "landing"
+                    root.parent.parent.parent.reset()
+             
+            Button:
+                text: "Save"
+                on_press:
+                    root.parent.parent.parent.manager.transition.direction = "right"
+                    root.parent.parent.parent.manager.current = "landing"
+                    root.parent.parent.parent.reset()
 
