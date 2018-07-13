@@ -1,0 +1,58 @@
+#: import main prototype
+
+Prototype:
+
+<Prototype>:
+    orientation: "horizontal"
+
+    BoxLayout:
+        size_hint_x: .3333
+
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: .3333
+
+        canvas:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size 
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Label:
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
+                text: "  Clever Chords"
+                font_size: 42
+                size_hint_x: .85
+
+            Button:
+                size_hint_x: .15
+                background_normal: "icons/microphone-normal.png"
+                background_down: "icons/microphone-down.png"
+                on_press: root.record()
+
+        ScrollView:
+            GridLayout:
+                canvas:
+                id: songlist_view
+                orientation: "vertical"
+                size_hint_y: None
+                cols: 1
+                height: self.minimum_height
+
+    BoxLayout:
+        size_hint_x: .3333
+
