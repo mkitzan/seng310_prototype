@@ -7,17 +7,20 @@ from kivy.uix.button import Button, Label
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.screenmanager import ScreenManager, Screen
 
+SM = None
+songlist_file = "songlist.txt"
+   
    
 class Landing(Screen):
     def build_songlist(self):
-        self.remove_widget(self.ids.songlist_view)
+        self.ids.songlist_view.clear_widgets()
         songlist = []
     
-        with open("songlist.txt", "r") as infile:
+        with open(songlist_file, "r") as infile:
             for line in infile:
                 match = re.match("^(.*)::(.*)\n$", line)
-                songlist += [Button(text=match.group(1)+" ["+match.group(2)+"]", background_normal="icons/bg.png", text_size=[580, None], color=[0, 0, 0, 1], \
-                                         valign="middle", halign="left", on_click=self.song, font_size=24, size_hint_y=None, height=50)]
+                songlist += [Button(text=match.group(1)+" ["+match.group(2)+"]", background_normal="icons/song-normal.png", background_down="icons/song-down.png", \
+                             text_size=[580, None], color=[0, 0, 0, 1], valign="middle", halign="left", on_click=self.song, font_size=24, size_hint_y=None, height=50)]
                 
         songlist.sort(key=lambda btn: btn.text.capitalize())
         alpha = ""
@@ -61,17 +64,21 @@ class Song(Screen):
     
     
 class SaveInput(BoxLayout):
-    pass
+    def save_song(self, spinner_loc):
+        with open(songlist_file, "a") as outfile:
+            outfile.write(self.ids.songname.text+"::"+spinner_loc.ids.dropdown.text+"\n")
+        SM.children[0].build_songlist()
     
 
 class PrototypeApp(App):
     def build(self):
-        sm = ScreenManager()
-        sm.add_widget(Landing(name="landing"))
-        sm.children[0].build_songlist()
-        sm.add_widget(Record(name="record"))
+        global SM
+        SM = ScreenManager()
+        SM.add_widget(Landing(name="landing"))
+        SM.children[0].build_songlist()
+        SM.add_widget(Record(name="record"))
         
-        return sm
+        return SM
 
 
 if __name__ == "__main__":
