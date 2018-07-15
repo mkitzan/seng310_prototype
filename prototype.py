@@ -70,6 +70,7 @@ class Song(Screen):
         self.ids.instr.text = instr
         
         self.mode = 0
+        self.standing = -1
         
         self.notes = [[]]
         self.beats = [[]]
@@ -139,6 +140,9 @@ class Song(Screen):
     
     
     def clear(self):
+        self.standing = -1
+        self.current_note = [0, 0]
+        self.current_beat = [0, 0]
         for row in self.notes:
             for el in row:
                 if type(el) is Label:
@@ -164,53 +168,89 @@ class Song(Screen):
             
     def get_cb(self):
         return self.beats[self.current_beat[0]][self.current_beat[1]]
+        
+        
+    def get_cn(self):
+        return self.notes[self.current_note[0]][self.current_note[1]]
             
+            
+    def get_cs(self):
+        return self.notes[self.current_note[0]][self.current_note[1]+1]
+
+    
+    def back_adjust(self, arr, start, step):
+        if arr[1] == 0:
+            print("#" + str(start))
+            arr[0] -= 1
+            arr[1] = start
+        else:
+            arr[1] -= step
+    
     
     def backward(self):
         if self.mode != 1:
             return
-            
-        self.get_cb().source = self.get_cb().source.replace("red", "black")
-        self.get_cb().source = self.get_cb().source.replace("red", "grey")  
-        #self.notes[self.current_note[0]][self.current_note[1]].color = self.black
         
-        if self.current_beat[1] == 0:
-            if self.current_beat[0] > 0:
-                self.current_beat[0] -= 1
-                self.current_beat[1] = self.line_len-1
+        if self.current_beat != [0, 0]:
+            self.get_cb().source = self.get_cb().source.replace("red", "black")
+            self.get_cb().source = self.get_cb().source.replace("red", "grey")
+            
+            self.back_adjust(self.current_beat, self.line_len-1, 1)
+            
+            self.get_cb().source = self.get_cb().source.replace("grey", "red")
+            self.get_cb().source = self.get_cb().source.replace("black", "red")  
+            
+            self.standing -= 1
+            print(self.standing)
+            if self.standing == -2:
+                self.get_cn().color = self.black
+                
+                self.back_adjust(self.current_note, len(self.notes[self.current_note[0]-1])-2, 2)
+                self.standing = self.get_cs()-1
+                print("> " + str(self.standing))
+                
+                self.get_cn().color = self.red
+            
+
+    def for_adjust(self, arr, to, step):
+        if arr[1] == to:
+            arr[0] += 1
+            arr[1] = 0
         else:
-            self.current_beat[1] -= 1
-        
-        #if current_beat[1] > self.note[self.current_note[0]][self.current_note[1]]:
-        #    self.notes[self.current_note[0]][self.current_note[1]].color = self.red  
-        self.get_cb().source = self.get_cb().source.replace("grey", "red")
-        self.get_cb().source = self.get_cb().source.replace("black", "red")  
-            
+            arr[1] += step
+
 
     def forward(self):
         if self.mode != 1:
             return
+        
+        if self.current_beat != [len(self.beats)-1, len(self.beats[-1])-1]:    
+            self.get_cb().source = self.get_cb().source.replace("red", "grey")
+            self.get_cb().source = self.get_cb().source.replace("red", "black")
             
-        self.get_cb().source = self.get_cb().source.replace("red", "grey")
-        self.get_cb().source = self.get_cb().source.replace("red", "black")
-        #self.notes[self.current_note[0]][self.current_note[1]].color = self.grey
+            self.for_adjust(self.current_beat, self.line_len-1, 1)
+            
+            self.get_cb().source = self.get_cb().source.replace("grey", "red")
+            self.get_cb().source = self.get_cb().source.replace("black", "red")
         
-        if self.current_beat[1] == self.line_len-1:
-            if self.current_beat[0] < len(self.beats)-1:
-                self.current_beat[0] += 1
-                self.current_beat[1] = 0
-        else:
-            self.current_beat[1] += 1
-        
-        self.get_cb().source = self.get_cb().source.replace("grey", "red")
-        self.get_cb().source = self.get_cb().source.replace("black", "red")
-        #self.notes[self.current_note[0]][self.current_note[1]].color = self.red
+            self.standing += 1
+            print(self.standing)
+            if self.standing == self.get_cs():
+                self.get_cn().color = self.grey
+                
+                self.for_adjust(self.current_note, len(self.notes[self.current_note[0]])-2, 2)
+                self.standing = -1
+                print("> " + str(self.standing))
+                
+                self.get_cn().color = self.red
+            
         
         
     def reset(self):
         self.ids.sheetmusic.clear_widgets()
         self.notes = [[]]
         self.beats = [[]]
+        self.standing = -1
         self.current_note = [0, 0]
         self.current_beat = [0, 0]
     
