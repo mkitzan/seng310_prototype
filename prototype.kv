@@ -119,6 +119,117 @@
                 on_press: root.pressed()
            
 
+<Song>:
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: .3333
+
+        canvas:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size 
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .125
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    
+            Button:
+                size_hint_x: .15
+                background_normal: "icons/back-normal.png"
+                background_down: "icons/back-down.png"
+                on_press: 
+                    root.manager.transition.direction = "right"
+                    root.manager.current = "landing"
+                    root.ids.play.state = "down"
+                    root.ids.karaoke.state = "normal"
+                    root.ids.edit.state = "normal"
+                    root.reset()
+
+            Label:
+                id: title
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
+                font_size: 36
+                size_hint_x: .575
+                    
+            Spinner:
+                size_hint: .25, .6666
+                pos_hint: {"center_y": .5}
+                id: instr
+                values: "Guitar", "Ukulele", "Mandolin", "Banjo"
+                font_size: 24
+            
+            Label:
+                size_hint_x: .025
+        
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .05
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Play"
+                font_size: 20
+                id: play
+                group: "mode"
+                state: "down"
+                on_press: root.play()
+                
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Karaoke"
+                font_size: 20
+                id: karaoke
+                group: "mode"
+                state: "normal"
+                on_press: root.karaoke()
+                 
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Edit"
+                font_size: 20
+                id: edit
+                group: "mode"
+                state: "normal"
+                on_press: root.edit()
+                
+        ScrollView:
+            BoxLayout:
+                id: sheetmusic
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
+                
+        BoxLayout:
+            id: special_element
+            orientation: "vertical"
+            size_hint_y: .12
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    
+
 <SaveInput>:
     BoxLayout:
         orientation: "vertical"
@@ -182,117 +293,117 @@
             size_hint_y: .6
 
 
-<Song>:
+<PlayBar>:
     BoxLayout:
-        orientation: "vertical"
-        size_hint_x: .3333
-
-        canvas:
-            Color:
-                rgba: 1, 1, 1, 1
-            Rectangle:
-                pos: self.pos
-                size: self.size 
-
-        BoxLayout:
-            orientation: "horizontal"
-            size_hint_y: .1125
-            
-            canvas:
-                Color:
-                    rgba: .3, .3, .3, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
-                    
-            Button:
-                size_hint_x: .15
-                background_normal: "icons/back-normal.png"
-                background_down: "icons/back-down.png"
-                on_press: 
-                    root.manager.transition.direction = "right"
-                    root.manager.current = "landing"
-                    root.reset()
-
-            Label:
-                id: title
-                text_size: self.size
-                halign: "left"
-                valign: "middle"
-                font_size: 36
-                size_hint_x: .575
-                    
-            Spinner:
-                size_hint: .25, .6666
-                pos_hint: {"center_y": .5}
-                id: instr
-                values: "Guitar", "Ukulele", "Mandolin", "Banjo"
-                font_size: 24
-            
-            Label:
-                size_hint_x: .025
+        orientation: "horizontal"
         
-        BoxLayout:
-            orientation: "horizontal"
-            size_hint_y: .05
+        Label:
+            size_hint_x: .05
+        
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/chevron-left-normal.png"
+            background_down: "icons/chevron-left-down.png"
+            on_press: root.parent.parent.parent.backward("black", "black", "black")
             
-            canvas:
-                Color:
-                    rgba: .3, .3, .3, 1
-                Rectangle:
-                    pos: self.pos
-                    size: self.size
+        ToggleButton:
+            size_hint: [.1875, 1.2]
+            pos_hint: {"center_y": .5}
+            background_normal: "icons/play-normal.png"
+            background_down: "icons/stop-normal.png"
+            state: "normal"
             
-            ToggleButton:
-                size_hint_x: .3333
-                text: "Play"
-                font_size: 20
-                group: "mode"
-                state: "down"
-                on_press: root.play()
-                
-            ToggleButton:
-                size_hint_x: .3333
-                text: "Karaoke"
-                font_size: 20
-                group: "mode"
-                state: "normal"
-                on_press: root.karaoke()
-                 
-            ToggleButton:
-                size_hint_x: .3333
-                text: "Edit"
-                font_size: 20
-                group: "mode"
-                state: "normal"
-                
-        BoxLayout:
-            id: top_element
-            orientation: "horizontal"
-            size_hint_y: .0001
-                
-        ScrollView:
-            BoxLayout:
-                id: sheetmusic
-                orientation: "vertical"
-                size_hint_y: None
-                height: self.minimum_height
-                
-        BoxLayout:
-            id: bot_element
-            orientation: "vertical"
-            size_hint_y: .1
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/chevron-right-normal.png"
+            background_down: "icons/chevron-right-down.png"
+            on_press: root.parent.parent.parent.forward("black", "black", "black")
             
-            BoxLayout:
-                orientation: "horizontal"
+        Label:
+            size_hint_x: .1
+            
+        Slider:
+            size_hint_x: .3125
+            cursor_size: ["42sp", "42sp"]
+            
+        Label:
+            size_hint_x: .05
+            
+
+<KaraokeBar>:
+    BoxLayout:
+        orientation: "horizontal"
+        
+        Button:
+            background_normal: ""
+            background_down: ""
+            on_press: root.parent.parent.parent.backward("red", "grey", "black")
+            
+        Button:
+            background_normal: ""
+            background_down: ""
+            on_press: root.parent.parent.parent.forward("red", "grey", "black")
+
+
+<EditBar>:
+    BoxLayout:
+        orientation: "horizontal"
+        
+        Label:
+            size_hint_x: .05
+        
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/chevron-left-normal.png"
+            background_down: "icons/chevron-left-down.png"
+            on_press: 
+                root.change_note()
+                root.parent.parent.parent.backward("blue", "black", "black")
+                root.set_note()
+        
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/chevron-right-normal.png"
+            background_down: "icons/chevron-right-down.png"
+            on_press: 
+                root.change_note()
+                root.parent.parent.parent.forward("blue", "black", "black")
+                root.set_note()
+        
+        Label:
+            size_hint_x: .06
+        
+        TextInput:
+            size_hint: [.2, .75]
+            pos_hint: {"center_y": .5}
+            id: note
+            text: root.get_note()
+            font_size: 42
                 
-                Button:
-                    background_normal: "icons/chevron-left-normal-alt.png"
-                    background_down: "icons/chevron-left-normal-alt.png"
-                    on_press: root.backward()
-                    
-                Button:
-                    background_normal: "icons/chevron-right-normal-alt.png"
-                    background_down: "icons/chevron-right-normal-alt.png"
-                    on_press: root.forward()
+        Label:
+            size_hint_x: .04
+            
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/arrow-up-black.png"
+            background_down: "icons/arrow-up-down.png"
+            on_press:
+                root.change_note()
+                root.parent.parent.parent.change_beat("up")
+                root.parent.parent.parent.forward("blue", "black", "black")
+                root.set_note()
+        
+        Button:
+            size_hint_x: .15
+            background_normal: "icons/arrow-down-black.png"
+            background_down: "icons/arrow-down-down.png"
+            on_press: 
+                root.change_note()
+                root.parent.parent.parent.change_beat("down")
+                root.parent.parent.parent.forward("blue", "black", "black")
+                root.set_note()
+            
+        Label:
+            size_hint_x: .05
+
 
