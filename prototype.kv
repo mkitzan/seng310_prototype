@@ -91,7 +91,7 @@
                 valign: "middle"
                 text: "Record"
                 font_size: 42
-                size_hint_x: .575
+                size_hint_x: .5
                     
             Spinner:
                 size_hint: .25, .6666
@@ -212,6 +212,7 @@
                 on_press: 
                     root.manager.transition.direction = "right"
                     root.manager.current = "landing"
+                    root.reset()
 
             Label:
                 id: title
@@ -244,10 +245,11 @@
             
             ToggleButton:
                 size_hint_x: .3333
-                text: "Scroll"
+                text: "Play"
                 font_size: 20
                 group: "mode"
                 state: "down"
+                on_press: root.play()
                 
             ToggleButton:
                 size_hint_x: .3333
@@ -255,6 +257,7 @@
                 font_size: 20
                 group: "mode"
                 state: "normal"
+                on_press: root.karaoke()
                  
             ToggleButton:
                 size_hint_x: .3333
@@ -264,8 +267,9 @@
                 state: "normal"
                 
         BoxLayout:
+            id: top_element
             orientation: "horizontal"
-            size_hint_y: .05
+            size_hint_y: .0001
                 
         ScrollView:
             BoxLayout:
@@ -273,4 +277,22 @@
                 orientation: "vertical"
                 size_hint_y: None
                 height: self.minimum_height
+                
+        BoxLayout:
+            id: bot_element
+            orientation: "vertical"
+            size_hint_y: .1
+            
+            BoxLayout:
+                orientation: "horizontal"
+                
+                Button:
+                    background_normal: "icons/chevron-left-normal-alt.png"
+                    background_down: "icons/chevron-left-normal-alt.png"
+                    on_press: root.backward()
+                    
+                Button:
+                    background_normal: "icons/chevron-right-normal-alt.png"
+                    background_down: "icons/chevron-right-normal-alt.png"
+                    on_press: root.forward()
 

@@ -68,16 +68,25 @@ class Song(Screen):
     def set_header(self, title, instr):
         self.ids.title.text = title
         self.ids.instr.text = instr
+        
+        self.mode = 0
+        
         self.notes = [[]]
         self.beats = [[]]
+        
         self.red = [.96, .03, .03, 1]
+        self.black = [0, 0, 0, 1]
+        self.grey = [.902, .902, .902, 1]
+        
+        self.line_len = 16;
+        self.current_note = [0, 0]
+        self.current_beat = [0, 0]
     
     
     def build_song(self):
         sources = {"u": "icons/arrow-up-black.png", "d": "icons/arrow-down-black.png"}
-        line_len = 16;
         count = 0
-        space = 1/(line_len-2)
+        space = 1/(self.line_len-2)
         
         with open("songs/"+self.ids.title.text.replace(" ", "-")+".txt", "r") as infile:
             for line in infile:
@@ -85,13 +94,13 @@ class Song(Screen):
                 start = True
                 
                 for ch in match.group(2):
-                    if count == line_len:
+                    if count == self.line_len:
                         self.beats += [[]]
                         self.notes += [[]]
                         count = 0
                         
                     if count == 0 or start == True:
-                        self.notes[-1] += [Label(text=match.group(1), font_size=38, color=[0, 0, 0, 1], size_hint=[space, None], height=50, bold=True), -1]
+                        self.notes[-1] += [Label(text=match.group(1), font_size=38, color=self.black, size_hint=[space, None], height=50, bold=True), -1]
                         start = False
                         
                     self.beats[-1] += [Image(source=sources[ch], size_hint=[space, None], height=28)]
@@ -100,9 +109,6 @@ class Song(Screen):
                     
                 self.beats[-1] += [Label(text="", size_hint=[space, None], height=28)]
                 self.notes[-1] += [Label(text="", size_hint=[space, None], height=28)]
-
-        self.beats[0][0].source = self.beats[0][0].source.replace("black", "red")
-        self.notes[0][0].color = self.red
         
         for i in range(len(self.notes)):
             self.ids.sheetmusic.add_widget(Label(text="", size_hint_y=None, height=28))
@@ -118,12 +124,96 @@ class Song(Screen):
                     top_layout.add_widget(Label(text="", size_hint=[space*self.notes[i][j], None], height=50))
                 else:
                     top_layout.add_widget(self.notes[i][j])
+                    
             for el in self.beats[i]:
                 bot_layout.add_widget(el)
                 
             self.ids.sheetmusic.add_widget(top_layout)
             self.ids.sheetmusic.add_widget(bot_layout)
             
+        for i in range(len(self.notes)):
+            self.notes[i] = list(filter(lambda el: type(el) is not Label or el.text != "", self.notes[i]))
+            
+        for i in range(len(self.beats)):
+            self.beats[i] = list(filter(lambda el: type(el) is not Label, self.beats[i]))
+    
+    
+    def clear(self):
+        for row in self.notes:
+            for el in row:
+                if type(el) is Label:
+                    el.color = self.black
+        
+        for row in self.beats:
+            for el in row:
+                el.source = el.source.replace("red", "black")
+                el.source = el.source.replace("grey", "black")
+        
+            
+    def karaoke(self):
+        self.clear()
+        self.beats[0][0].source = self.beats[0][0].source.replace("black", "red")
+        self.notes[0][0].color = self.red
+        self.mode = 1
+        
+        
+    def play(self):
+        self.clear()
+        self.mode = 0
+            
+            
+    def get_cb(self):
+        return self.beats[self.current_beat[0]][self.current_beat[1]]
+            
+    
+    def backward(self):
+        if self.mode != 1:
+            return
+            
+        self.get_cb().source = self.get_cb().source.replace("red", "black")
+        self.get_cb().source = self.get_cb().source.replace("red", "grey")  
+        #self.notes[self.current_note[0]][self.current_note[1]].color = self.black
+        
+        if self.current_beat[1] == 0:
+            if self.current_beat[0] > 0:
+                self.current_beat[0] -= 1
+                self.current_beat[1] = self.line_len-1
+        else:
+            self.current_beat[1] -= 1
+        
+        #if current_beat[1] > self.note[self.current_note[0]][self.current_note[1]]:
+        #    self.notes[self.current_note[0]][self.current_note[1]].color = self.red  
+        self.get_cb().source = self.get_cb().source.replace("grey", "red")
+        self.get_cb().source = self.get_cb().source.replace("black", "red")  
+            
+
+    def forward(self):
+        if self.mode != 1:
+            return
+            
+        self.get_cb().source = self.get_cb().source.replace("red", "grey")
+        self.get_cb().source = self.get_cb().source.replace("red", "black")
+        #self.notes[self.current_note[0]][self.current_note[1]].color = self.grey
+        
+        if self.current_beat[1] == self.line_len-1:
+            if self.current_beat[0] < len(self.beats)-1:
+                self.current_beat[0] += 1
+                self.current_beat[1] = 0
+        else:
+            self.current_beat[1] += 1
+        
+        self.get_cb().source = self.get_cb().source.replace("grey", "red")
+        self.get_cb().source = self.get_cb().source.replace("black", "red")
+        #self.notes[self.current_note[0]][self.current_note[1]].color = self.red
+        
+        
+    def reset(self):
+        self.ids.sheetmusic.clear_widgets()
+        self.notes = [[]]
+        self.beats = [[]]
+        self.current_note = [0, 0]
+        self.current_beat = [0, 0]
+    
     
 class SaveInput(BoxLayout):
     def save_song(self, spinner_loc):
