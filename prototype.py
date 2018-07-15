@@ -74,7 +74,7 @@ class Song(Screen):
         
         self.colors = {}
         self.colors["red"] = [.96, .03, .03, 1]
-        self.colors["blue"] = [.027, .09, .96, 1]
+        self.colors["blue"] = [.18, .655, .831, 1]
         self.colors["black"] = [0, 0, 0, 1]
         self.colors["grey"] = [.902, .902, .902, 1]
         
