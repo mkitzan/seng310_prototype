@@ -40,6 +40,11 @@
                     root.manager.current = "record"
 
         ScrollView:
+            scroll_type: ["bars"]
+            bar_width: "15dp"
+            bar_color: [.7, .7, .7, 1]
+            bar_inactive_color: [.7, .7, .7, 1]
+        
             GridLayout:
                 id: songlist_view
                 orientation: "vertical"
@@ -175,4 +180,97 @@
                     
         Label:
             size_hint_y: .6
+
+
+<Song>:
+    BoxLayout:
+        orientation: "vertical"
+        size_hint_x: .3333
+
+        canvas:
+            Color:
+                rgba: 1, 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size 
+
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .1125
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+                    
+            Button:
+                size_hint_x: .15
+                background_normal: "icons/back-normal.png"
+                background_down: "icons/back-down.png"
+                on_press: 
+                    root.manager.transition.direction = "right"
+                    root.manager.current = "landing"
+
+            Label:
+                id: title
+                text_size: self.size
+                halign: "left"
+                valign: "middle"
+                font_size: 36
+                size_hint_x: .575
+                    
+            Spinner:
+                size_hint: .25, .6666
+                pos_hint: {"center_y": .5}
+                id: instr
+                values: "Guitar", "Ukulele", "Mandolin", "Banjo"
+                font_size: 24
+            
+            Label:
+                size_hint_x: .025
+        
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .05
+            
+            canvas:
+                Color:
+                    rgba: .3, .3, .3, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Scroll"
+                font_size: 20
+                group: "mode"
+                state: "down"
+                
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Karaoke"
+                font_size: 20
+                group: "mode"
+                state: "normal"
+                 
+            ToggleButton:
+                size_hint_x: .3333
+                text: "Edit"
+                font_size: 20
+                group: "mode"
+                state: "normal"
+                
+        BoxLayout:
+            orientation: "horizontal"
+            size_hint_y: .05
+                
+        ScrollView:
+            BoxLayout:
+                id: sheetmusic
+                orientation: "vertical"
+                size_hint_y: None
+                height: self.minimum_height
 
